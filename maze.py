@@ -24,7 +24,7 @@ def make_maze(dim, p):
     maze[dim - 1][dim - 1] = "G"
     return maze
 
-#prints a given maze
+# prints a given maze
 def print_maze(maze):
     print('-'*(len(maze)*4), end="")
     print()
@@ -37,7 +37,7 @@ def print_maze(maze):
         print()
 
 
-#prints the path found by the search on the maze
+# prints the path found by the search on the maze
 def print_path(maze, path):
     new_maze = maze
     while path.parent is not None:
@@ -54,7 +54,7 @@ def generate_children(maze, position):
     y = position[1]
     dim = len(maze)
     valid_children = []
-    #check up, down, left and right of the position for valid children
+    # check up, down, left and right of the position for valid children
     if x+1 <= dim - 1 and maze[x+1][y] != "X": 
         valid_children.append(Node((x+1, y)))
     if x-1 >= 0 and maze[x-1][y] != "X": 
@@ -66,7 +66,7 @@ def generate_children(maze, position):
     
     return valid_children
 
-#Used to construct the graph
+# Used to construct the graph
 class Node:
     def __init__(self, coordinates):
         self.coordinates = coordinates
@@ -90,7 +90,7 @@ def dfs(maze, start, goal):
     
     return None
 
-#Breadth First Search
+# Breadth First Search
 def bfs(maze, start, goal):
     fringe = []
     fringe.append(Node(start))
@@ -112,15 +112,38 @@ this_maze = make_maze(10, 0.3)
 print("Randomly generated maze:")
 print_maze(this_maze)
 
-#solving this_maze using dfs
+# solving this_maze using dfs
 answer_dfs = dfs(this_maze, (0,0), (9,9))
 if answer_dfs != None:
     print("Path found by DFS")
     print_path(this_maze, answer_dfs)
-    #solving this_maze using bfs
+    # solving this_maze using bfs
     answer_bfs = bfs(this_maze, (0,0), (9,9))
     print("Path found by BFS:")
     print_path(this_maze, answer_bfs)
 else:
     print("no solution")
 
+# graph generation for dfs: ‘obstacle density p’ vs 
+# ‘probability that S can be reached from G’.
+x_range = np.arange(0.0, 1.0, 0.01)
+y_range = np.empty(100)
+cnt = 0
+dim = 50
+tries_per_density = 100
+for i in x_range:
+    success = 0
+    for j in range (tries_per_density):
+        this_maze = make_maze(dim, i)
+        answer = dfs(this_maze, (0,0), (dim-1, dim-1))
+        if answer != None:
+            success += 1
+    y_range[cnt] = success / tries_per_density
+    cnt += 1
+
+
+plt.plot(x_range, y_range)
+plt.title("Probability that S can be reached from G for DFS vs Obstacle density p")
+plt.xlabel("obstacle density p")
+plt.ylabel("probability that S can be reached from G")
+plt.show()
