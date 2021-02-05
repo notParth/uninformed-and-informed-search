@@ -3,6 +3,8 @@
 import numpy as np
 import random as rand
 import matplotlib.pyplot as plt
+import math
+from queue import PriorityQueue
 
 # type of maze cells:
 # 0) blocked("#") 
@@ -79,6 +81,13 @@ class Node:
     def __init__(self, coordinates):
         self.coordinates = coordinates
         self.parent = None
+        self.level = 0
+    def __lt__(self, other):
+        return
+
+# Calculate euclidean distance
+def euclid_dist(start, goal):
+    return math.sqrt((goal[0] - start[0])**2 + (goal[1] - start[1])**2)
 
 # Depth first search
 def dfs(maze, start, goal):
@@ -116,6 +125,25 @@ def bfs(maze, start, goal):
     
     return None
 
+# A*
+def a_star(maze, start, goal):
+    fringe = PriorityQueue()
+    this_node = Node(start)
+    this_node.level = 0
+    fringe.put(((this_node.level+euclid_dist(start, goal)), this_node))
+
+    while not fringe.empty():
+        current_state = fringe.get()[1]
+        if current_state.coordinates == goal:
+            return current_state
+        for x in generate_children(maze, current_state.coordinates):
+                x.parent = current_state
+                x.level = current_state.level + 1
+                coordinates = x.coordinates
+                level = x.level
+                fringe.put((level+euclid_dist(coordinates, goal),x))
+    return None
+
 this_maze = make_maze(10, 0.3)
 print("Randomly generated maze:")
 print_maze(this_maze)
@@ -131,6 +159,11 @@ if answer_dfs != None:
     print("Path found by BFS:")
     print_path(this_maze, answer_bfs)
     remove_path(this_maze, answer_bfs)
+    #solving this_maze using a*
+    answer_a_star = a_star(this_maze, (0,0), (9,9))
+    print("Path found by A*:")
+    print_path(this_maze, answer_a_star)
+    remove_path(this_maze, answer_a_star)
 else:
     print("no solution")
 
