@@ -2,6 +2,7 @@
 
 import numpy as np
 import random as rand
+import matplotlib.pyplot as plt
 
 # type of maze cells:
 # 0) blocked("#") 
@@ -43,10 +44,11 @@ def print_path(maze, path):
         parent = path.parent.coordinates
         maze[parent[0]][parent[1]] = "*"
         path = path.parent
+    new_maze[0][0] = "S"
     print_maze(new_maze)
 
 # this function returns the valid children of a given position on the maze
-# valid children are the ones that are not blocked("#") and are not outside the maze
+# valid children are the ones that are not blocked("X") and are not outside the maze
 def generate_children(maze, position):
     x = position[0]
     y = position[1]
@@ -88,12 +90,37 @@ def dfs(maze, start, goal):
     
     return None
 
-dim = 10
-this_maze = make_maze(dim, 0.3)
+#Breadth First Search
+def bfs(maze, start, goal):
+    fringe = []
+    fringe.append(Node(start))
+    closed_set = {''}
+
+    while fringe:
+        current_state = fringe.pop(0)
+        if current_state.coordinates == goal:
+            return current_state
+        for x in generate_children(maze, current_state.coordinates):
+            if(x.coordinates not in closed_set):
+                x.parent = current_state
+                fringe.append(x)
+        closed_set.add(current_state.coordinates)
+    
+    return None
+
+this_maze = make_maze(10, 0.3)
+print("Randomly generated maze:")
 print_maze(this_maze)
-answer = dfs(this_maze, (0,0), (dim-1, dim-1))
-if answer is None:
-    print("No solution")
+
+#solving this_maze using dfs
+answer_dfs = dfs(this_maze, (0,0), (9,9))
+if answer_dfs != None:
+    print("Path found by DFS")
+    print_path(this_maze, answer_dfs)
+    #solving this_maze using bfs
+    answer_bfs = bfs(this_maze, (0,0), (9,9))
+    print("Path found by BFS:")
+    print_path(this_maze, answer_bfs)
 else:
-    print("success")
-    print_path(this_maze, answer)
+    print("no solution")
+
