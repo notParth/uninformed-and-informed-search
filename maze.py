@@ -47,6 +47,14 @@ def print_path(maze, path):
     new_maze[0][0] = "S"
     print_maze(new_maze)
 
+# removes path from matrix
+def remove_path(maze, path):
+    while path.parent is not None:
+        parent = path.parent.coordinates
+        maze[parent[0]][parent[1]] = " "
+        path = path.parent
+    maze[0][0] = "S"
+
 # this function returns the valid children of a given position on the maze
 # valid children are the ones that are not blocked("X") and are not outside the maze
 def generate_children(maze, position):
@@ -117,10 +125,12 @@ answer_dfs = dfs(this_maze, (0,0), (9,9))
 if answer_dfs != None:
     print("Path found by DFS")
     print_path(this_maze, answer_dfs)
+    remove_path(this_maze, answer_dfs)
     # solving this_maze using bfs
     answer_bfs = bfs(this_maze, (0,0), (9,9))
     print("Path found by BFS:")
     print_path(this_maze, answer_bfs)
+    remove_path(this_maze, answer_bfs)
 else:
     print("no solution")
 
