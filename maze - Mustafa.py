@@ -95,7 +95,7 @@ def dfs(maze, start, goal):
             path.append(start)
             path.reverse()
             return path
-        for neighbour in get_neighbours(maze, current):
+        for neighbour in get_nonfire_neighbours(maze, current):
             if neighbour not in tree:
                 fringe.append(neighbour)
                 tree[neighbour] = current
@@ -294,7 +294,7 @@ def astar(maze, start, goal):
 # What's the largest dimension you can solve using A at p = 0:3 in less than a minute?
 
 
-dim = 2000
+dim = 3000
 runs = 5
 difference = 0
 
@@ -303,7 +303,7 @@ for run in range(runs):
         maze = make_maze(dim, 0.3)
         starting_time = time.time()
         # change search type here
-        path = astar(maze, (0,0), (dim-1, dim-1))
+        path = dfs(maze, (0,0), (dim-1, dim-1))
         difference = time.time()-starting_time
         if path != None:
             print("Path found in",difference,"seconds with",dim,"dim")
