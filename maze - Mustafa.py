@@ -194,7 +194,7 @@ def astar(maze, start, goal):
 ############################### Question 2 ########################################## 
 # For as large a dimension as your system can handle, generate a plot of `obstacle density p' vs `probability that S can be reached from G'.
 
-# dim = 50
+# dim = 100
 # dataX = []
 # dataY = []
 # runs = 100
@@ -221,72 +221,72 @@ def astar(maze, start, goal):
 #  For as large a dimension as your system can handle, generate a plot of the average `number of nodes explored by 
 # BFS - number of nodes explored by A*' vs `obstacle density p'. If there is no path from S to G, what should this difference be?
 
-# def bfs_counter(maze, start, goal):
-#     fringe = deque() 
-#     fringe.append(start)
-#     tree = dict()
-#     tree[start] = None
-#     count = 0
+def bfs_counter(maze, start, goal):
+    fringe = deque() 
+    fringe.append(start)
+    tree = dict()
+    tree[start] = None
+    count = 0
 
-#     while  fringe:
-#         current = fringe.popleft()
-#         count += 1
-#         if current == goal:
-#             return count
-#         for neighbour in get_neighbours(maze, current):
-#             if neighbour not in tree:
-#                 fringe.append(neighbour)
-#                 tree[neighbour] = current
+    while  fringe:
+        current = fringe.popleft()
+        count += 1
+        if current == goal:
+            return count
+        for neighbour in get_neighbours(maze, current):
+            if neighbour not in tree:
+                fringe.append(neighbour)
+                tree[neighbour] = current
                 
 
-#     return None
+    return None
 
-# def astar_counter(maze, start, goal):
-#     fringe = [] 
-#     heapq.heappush(fringe, (0,start))
-#     tree = dict()
-#     cost_tree = dict()
-#     tree[start] = None
-#     cost_tree[start] = 0
-#     count = 0
+def astar_counter(maze, start, goal):
+    fringe = [] 
+    heapq.heappush(fringe, (0,start))
+    tree = dict()
+    cost_tree = dict()
+    tree[start] = None
+    cost_tree[start] = 0
+    count = 0
 
-#     while  fringe:
-#         current = heapq.heappop(fringe)[1]
-#         count += 1
-#         if current == goal:
-#             return count
-#         for neighbour in get_neighbours(maze, current):
-#             new_cost = cost_tree[current] + 1
-#             if neighbour not in cost_tree or new_cost < cost_tree[neighbour]:
-#                 cost_tree[neighbour] = new_cost
-#                 priority = new_cost + distance(goal, neighbour)
-#                 heapq.heappush(fringe, (priority, neighbour))                
-#                 tree[neighbour] = current
+    while  fringe:
+        current = heapq.heappop(fringe)[1]
+        count += 1
+        if current == goal:
+            return count
+        for neighbour in get_neighbours(maze, current):
+            new_cost = cost_tree[current] + 1
+            if neighbour not in cost_tree or new_cost < cost_tree[neighbour]:
+                cost_tree[neighbour] = new_cost
+                priority = new_cost + distance(goal, neighbour)
+                heapq.heappush(fringe, (priority, neighbour))                
+                tree[neighbour] = current
 
-#     return None
+    return None
 
-# dim = 50
-# dataX = []
-# dataY = []
-# runs = 100
+dim = 100
+dataX = []
+dataY = []
+runs = 100
 
-# for density in np.linspace(0,1,100):
-#     difference = 0
-#     for run in range(runs):
-#         maze = make_maze(dim, density)
-#         bfs_nodes_explored = bfs_counter(maze, (0,0), (dim-1,dim-1))       
-#         if bfs_nodes_explored != None:
-#             astar_nodes_explored = astar_counter(maze, (0,0), (dim-1,dim-1))
-#             difference += bfs_nodes_explored - astar_nodes_explored
+for density in np.linspace(0,1,100):
+    difference = 0
+    for run in range(runs):
+        maze = make_maze(dim, density)
+        bfs_nodes_explored = bfs_counter(maze, (0,0), (dim-1,dim-1))       
+        if bfs_nodes_explored != None:
+            astar_nodes_explored = astar_counter(maze, (0,0), (dim-1,dim-1))
+            difference += bfs_nodes_explored - astar_nodes_explored
         
-#     dataX.append(density)
-#     dataY.append(difference/runs)
+    dataX.append(density)
+    dataY.append(difference/runs)
 
-# plt.plot(dataX, dataY)
-# plt.title("`number of nodes explored by BFS - number of nodes explored by A*' vs `obstacle density p'")
-# plt.ylabel("number of nodes explored by BFS - number of nodes explored by A*")
-# plt.xlabel("obstacle density p")
-# plt.show()
+plt.plot(dataX, dataY)
+plt.title("`number of nodes explored by BFS - number of nodes explored by A*' vs `obstacle density p'")
+plt.ylabel("number of nodes explored by BFS - number of nodes explored by A*")
+plt.xlabel("obstacle density p")
+plt.show()
 
 ########################################### Problem 4 ###################################
 # What's the largest dimension you can solve using DFS at p = 0:3 in less than a minute?
@@ -294,26 +294,26 @@ def astar(maze, start, goal):
 # What's the largest dimension you can solve using A at p = 0:3 in less than a minute?
 
 
-dim = 3000
-runs = 5
-difference = 0
+# dim = 10500
+# runs = 5
+# difference = 0
 
-for run in range(runs):
-    while True:
-        maze = make_maze(dim, 0.3)
-        starting_time = time.time()
-        # change search type here
-        path = dfs(maze, (0,0), (dim-1, dim-1))
-        difference = time.time()-starting_time
-        if path != None:
-            print("Path found in",difference,"seconds with",dim,"dim")
-            if difference > 60:
-                break
-            dim += 100
-        else:
-            print("Path not found in",difference,"seconds with",dim,"dim")
+# for run in range(runs):
+#     while True:
+#         maze = make_maze(dim, 0.3)
+#         starting_time = time.time()
+#         # change search type here
+#         path = dfs(maze, (0,0), (dim-1, dim-1))
+#         difference = time.time()-starting_time
+#         if path != None:
+#             print("Path found in",difference,"seconds with",dim,"dim")
+#             if difference > 60:
+#                 break
+#             dim += 100
+#         else:
+#             print("Path not found in",difference,"seconds with",dim,"dim")
 
-print("Largest dimension found:", dim)   
+# print("Largest dimension found:", dim)   
 
 
 ###########################################################################
