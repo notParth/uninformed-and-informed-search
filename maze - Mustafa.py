@@ -32,7 +32,7 @@ def print_maze(maze):
         print()
 
 ################# Take n steps on maze with given path #################
-def take_n_step(maze, path, steps=None):
+def take_n_steps(maze, path, steps=None):
     if steps == None:
         for point in path:
             maze[point[0]][point[1]] = '*'
@@ -61,7 +61,22 @@ def get_neighbours(maze, current):
     
     return neighbours
 
+def get_nonfire_neighbours(maze, current):
+    x = current[0]
+    y = current[1]
+    dim = len(maze)
+    neighbours = []
 
+    if x-1 >= 0 and maze[x-1][y] != "X" and maze[x-1][y] != "F": 
+        neighbours.append((x-1, y))
+    if y-1 >= 0 and maze[x][y-1] != "X" and maze[x-1][y] != "F":
+        neighbours.append((x, y-1))
+    if y+1 <= dim - 1 and maze[x][y+1] != "X" and maze[x-1][y] != "F":
+        neighbours.append((x, y+1))
+    if x+1 <= dim - 1 and maze[x+1][y] != "X" and maze[x-1][y] != "F":
+        neighbours.append((x+1, y))   
+    
+    return neighbours
 ###################### DFS = Find a path given a maze, start, goal ###########################
 def dfs(maze, start, goal):
     fringe = [start] 
@@ -79,7 +94,7 @@ def dfs(maze, start, goal):
             path.append(start)
             path.reverse()
             return path
-        for neighbour in get_neighbours(maze, current):
+        for neighbour in get_nonfire_neighbours(maze, current):
             if neighbour not in tree:
                 fringe.append(neighbour)
                 tree[neighbour] = current
@@ -104,7 +119,7 @@ def bfs(maze, start, goal):
             path.append(start)
             path.reverse()
             return path
-        for neighbour in get_neighbours(maze, current):
+        for neighbour in get_nonfire_neighbours(maze, current):
             if neighbour not in tree:
                 fringe.append(neighbour)
                 tree[neighbour] = current
@@ -135,7 +150,7 @@ def astar(maze, start, goal):
             path.append(start)
             path.reverse()
             return path
-        for neighbour in get_neighbours(maze, current):
+        for neighbour in get_nonfire_neighbours(maze, current):
             new_cost = cost_tree[current] + 1
             if neighbour not in cost_tree or new_cost < cost_tree[neighbour]:
                 cost_tree[neighbour] = new_cost
@@ -157,21 +172,21 @@ def astar(maze, start, goal):
 # print("\n\nDepth first search: ")
 
 # path = dfs(maze, (0,0), (dim-1,dim-1))
-# take_n_step(maze, path)
+# take_n_steps(maze, path)
 # print_maze(maze)
 # print("\n\nBreadth first search:")
 
-# take_n_step(maze, path, -1)
+# take_n_steps(maze, path, -1)
 
 # path = bfs(maze, (0,0), (dim-1,dim-1))
-# take_n_step(maze, path)
+# take_n_steps(maze, path)
 # print_maze(maze)
 # print("\n\nA* search:")
     
-# take_n_step(maze, path, -1)
+# take_n_steps(maze, path, -1)
 
 # path = astar(maze, (0,0), (dim-1,dim-1))
-# take_n_step(maze, path)
+# take_n_steps(maze, path)
 # print_maze(maze)
 # print("\n\n")
     
@@ -327,31 +342,14 @@ def advance_fire_one_step(maze, q=0.3):
 # maze = advance_fire_one_step(maze, 1.0)
 # print_maze(maze)
 
-def get_nonfire_neighbours(maze, current):
-    x = current[0]
-    y = current[1]
-    dim = len(maze)
-    neighbours = []
 
-    if x-1 >= 0 and maze[x-1][y] != "X" and maze[x-1][y] != "F": 
-        neighbours.append((x-1, y))
-    if y-1 >= 0 and maze[x][y-1] != "X" and maze[x-1][y] != "F":
-        neighbours.append((x, y-1))
-    if y+1 <= dim - 1 and maze[x][y+1] != "X" and maze[x-1][y] != "F":
-        neighbours.append((x, y+1))
-    if x+1 <= dim - 1 and maze[x+1][y] != "X" and maze[x-1][y] != "F":
-        neighbours.append((x+1, y))   
-    
-    return neighbours
+def take_nth_step_with_fire(maze, path, step=0):
+    if maze[path[step][0]][path[step][1]] != 'F':
+        maze[path[step][0]][path[step][1]] = '*'
+        return True
+    else:
+        return False  
 
-
-def take_n_step_with_fire(maze, path, steps=0):
-    for point in path[:steps]:
-        if maze[point[0]][point[1]] == ' ':
-            maze[point[0]][point[1]] = '*'
-        else:
-            return False
-    return True   
 
 ###################################################################################
 ############################### Problem 5-8 solving area ##########################
@@ -370,11 +368,41 @@ def take_n_step_with_fire(maze, path, steps=0):
 
 # path = bfs(maze, (0,0), (dim-1, dim-1))
 
-# for step in range(len(path)+1):
-#     if take_n_step_with_fire(maze, path, step):
-#         maze = advance_fire_one_step(maze, 0.0)
-#         print("\n\n")
-#         print_maze(maze)
-#     else:
-#         print("stepped into fire!")
-#         break
+# if path != None:
+#     for step in range(len(path)):
+#         if take_nth_step_with_fire(maze, path, step):
+#             maze = advance_fire_one_step(maze, 0.1)
+#             print("\n\n")
+#             print_maze(maze)
+#         else:
+#             print("stepped into fire!")
+#             break    
+# else:
+#     print("No path found.")
+
+
+################################## Strategy 2 ############################################
+
+
+dim = 10
+maze = make_maze(dim, 0.2)
+maze[2][2] = 'F'
+print_maze(maze)
+
+start = (0,0)
+goal = (dim-1, dim-1)
+
+while(True):   
+    path = bfs(maze, start, goal)
+    maze = advance_fire_one_step(maze, 0.1)
+    if path != None:          
+        start = path[1]                
+        take_n_steps(maze, path, 1)          
+        print("\n\n")
+        print_maze(maze)
+        if start == goal:
+            print("Path found")
+            break
+    else:
+        print("No path found.")
+        break
