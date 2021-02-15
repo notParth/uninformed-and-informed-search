@@ -150,8 +150,8 @@ def astar(maze, start, goal):
 ##################################################################################
 
 ########################## Test all three searches using one maze #################
-# dim = 10
-# p = 0.1
+# dim = 30
+# p = 0.3
 # maze = make_maze(dim,p)
 # print_maze(maze)
 # print("\n\nDepth first search: ")
@@ -223,7 +223,7 @@ def astar(maze, start, goal):
 #                 tree[neighbour] = current
                 
 
-#     return None
+#     return count
 
 # def astar_counter(maze, start, goal):
 #     fringe = [] 
@@ -247,7 +247,7 @@ def astar(maze, start, goal):
 #                 heapq.heappush(fringe, (priority, neighbour))                
 #                 tree[neighbour] = current
 
-#     return None
+#     return count
 
 # dim = 100
 # dataX = []
@@ -258,10 +258,9 @@ def astar(maze, start, goal):
 #     difference = 0
 #     for run in range(runs):
 #         maze = make_maze(dim, density)
-#         bfs_nodes_explored = bfs_counter(maze, (0,0), (dim-1,dim-1))       
-#         if bfs_nodes_explored != None:
-#             astar_nodes_explored = astar_counter(maze, (0,0), (dim-1,dim-1))
-#             difference += bfs_nodes_explored - astar_nodes_explored
+#         bfs_nodes_explored = bfs_counter(maze, (0,0), (dim-1,dim-1))  
+#         astar_nodes_explored = astar_counter(maze, (0,0), (dim-1,dim-1))
+#         difference += bfs_nodes_explored - astar_nodes_explored
         
 #     dataX.append(density)
 #     dataY.append(difference/runs)
@@ -327,7 +326,6 @@ def advance_fire_one_step(maze, q=0.3):
 # maze[1][1] = 'X'
 # maze = advance_fire_one_step(maze, 1.0)
 # print_maze(maze)
-
 
 def get_nonfire_neighbours(maze, current):
     x = current[0]
