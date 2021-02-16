@@ -12,11 +12,11 @@ def make_maze(dim, p):
     for x in range(dim):
         for y in range(dim):
             if(rand.random() <= p):
-                maze[x][y] = "X"
+                maze[x][y] = 'X'
             else:
-                maze[x][y] = " "
-    maze[0][0] = "S"
-    maze[dim - 1][dim - 1] = "G"
+                maze[x][y] = ' ' 
+    maze[0][0] = 'S'
+    maze[dim - 1][dim - 1] = 'G'
     return maze
 
 ################### Print ascii maze ##############################
@@ -50,13 +50,13 @@ def get_neighbours(maze, current):
     dim = len(maze)
     neighbours = []
 
-    if x-1 >= 0 and maze[x-1][y] != "X": 
+    if x-1 >= 0 and maze[x-1][y] != 'X': 
         neighbours.append((x-1, y))
-    if y-1 >= 0 and maze[x][y-1] != "X": 
+    if y-1 >= 0 and maze[x][y-1] != 'X': 
         neighbours.append((x, y-1))
-    if y+1 <= dim - 1 and maze[x][y+1] != "X": 
+    if y+1 <= dim - 1 and maze[x][y+1] != 'X': 
         neighbours.append((x, y+1))
-    if x+1 <= dim - 1 and maze[x+1][y] != "X": 
+    if x+1 <= dim - 1 and maze[x+1][y] != 'X': 
         neighbours.append((x+1, y))   
     
     return neighbours
@@ -67,16 +67,24 @@ def get_nonfire_neighbours(maze, current):
     dim = len(maze)
     neighbours = []
 
-    if x-1 >= 0 and maze[x-1][y] != "X" and maze[x-1][y] != "F": 
+    if x-1 >= 0 and maze[x-1][y] != 'X' and maze[x-1][y] != 'F': 
         neighbours.append((x-1, y))
-    if y-1 >= 0 and maze[x][y-1] != "X" and maze[x-1][y] != "F":
+    if y-1 >= 0 and maze[x][y-1] != 'X' and maze[x][y-1] != 'F':
         neighbours.append((x, y-1))
-    if y+1 <= dim - 1 and maze[x][y+1] != "X" and maze[x-1][y] != "F":
+    if y+1 <= dim - 1 and maze[x][y+1] != 'X' and maze[x][y+1] != 'F':
         neighbours.append((x, y+1))
-    if x+1 <= dim - 1 and maze[x+1][y] != "X" and maze[x-1][y] != "F":
+    if x+1 <= dim - 1 and maze[x+1][y] != 'X' and maze[x+1][y] != 'F':
         neighbours.append((x+1, y))   
     
     return neighbours
+
+########### test neighbour #############
+# maze = make_maze(10,0.1)
+# maze[1][2] = 'F'
+# print(get_nonfire_neighbours(maze, (2,2)))
+
+
+
 ###################### DFS = Find a path given a maze, start, goal ###########################
 def dfs(maze, start, goal):
     fringe = [start] 
@@ -165,7 +173,7 @@ def astar(maze, start, goal):
 ##################################################################################
 
 ########################## Test all three searches using one maze #################
-# dim = 30
+# dim = 10
 # p = 0.3
 # maze = make_maze(dim,p)
 # print_maze(maze)
@@ -361,65 +369,71 @@ def take_nth_step_with_fire(maze, path, step=0):
 ################################## Strategy 1 ############################################
 
 
-# dim = 10
-# maze = make_maze(dim, 0.3)
-# maze[0][dim-1] = 'F'
-# print_maze(maze)
+dim = 10
+maze = make_maze(dim, 0.3)
+print_maze(maze)
+start = (0,0)
+fire = (0, dim-1)
 
-# path = bfs(maze, (0,0), (dim-1, dim-1))
 
-# if path != None and dfs(maze, (0,0), (0,dim-1)) != None:
-#     for step in range(len(path)):
-#         if take_nth_step_with_fire(maze, path, step):
-#             print("\n\n")
-#             print_maze(maze)
-#             maze = advance_fire_one_step(maze, 1.0)
 
-            
-#             if path[step] == (dim-1,dim-1):
-#                 print("path found.")
-#         else:
-#             print("stepped into fire!")
-#             break    
-# else:
-#     print("No path found or cant reach fire.")
+if dfs(maze, start, fire) != None:
+    maze[0][dim-1] = 'F'
+    path = dfs(maze, (0,0), (dim-1, dim-1))
+
+    if (path != None):
+        for step in range(len(path)):
+            if take_nth_step_with_fire(maze, path, step):
+                print("\n\n")
+                print_maze(maze)
+                maze = advance_fire_one_step(maze, 1.0)
+
+                
+                if path[step] == (dim-1,dim-1):
+                    print("path found.")
+            else:
+                print("stepped into fire!")
+                break    
+else:
+    print("No path found or cant reach fire.")
 
 
 ################################## Strategy 2 ############################################
 
 
-dim = 10
-maze = make_maze(dim, 0.3)
-maze[0][dim-1] = 'F'
+# dim = 10
+# maze = make_maze(dim, 0.1)
+# maze[0][dim-1] = 'F'
 
-start = (0,0)
-goal = (dim-1, dim-1)
+# start = (0,0)
+# goal = (dim-1, dim-1)
 
-if dfs(maze, (0,0), (0,dim-1)) != None:
+# if dfs(maze, start, (0,dim-1)) != None:
 
-    while(True):   
-        
-        path = dfs(maze, start, goal)        
-        if path != None:     
-            print("\n\nInitial//After fire advance")
-            print_maze(maze)     
-            start = path[1]                
-            take_n_steps(maze, path, 2)                   
-            print("\n\nAfter step advance")
-            print_maze(maze)  
-            maze = advance_fire_one_step(maze, 1.0)
+#     while(True):           
+#         path = dfs(maze, start, goal)        
+#         if path != None:                  
+#             take_n_steps(maze, path, 1)                   
+#             print("\n\nAfter step advance")
+#             print_maze(maze)  
+                 
+#             start = path[1]  
             
-            if start == goal:
-                print("Path found")
-                break
-        else:
-            print(start)
-            print("\n\nNo path found in following maze.")
-            print_maze(maze)
-            break
-else:
-    print("\n\ncant reach fire.")
-    print_maze(maze)
+#             if start == goal:
+#                 print("Path found")
+#                 break
+#         else:
+#             print(start)
+#             print("\n\nNo path found in following maze:")
+#             print_maze(maze)
+#             break
+
+#         maze = advance_fire_one_step(maze, 1.0)
+#         print("\n\nInitial//After fire advance")
+#         print_maze(maze)
+# else:
+#     print("\n\nCant reach fire.")
+#     print_maze(maze)
 
 ################################## Strategy 3 ############################################
 
@@ -501,3 +515,4 @@ else:
 # plt.show()
 
 ################################## Problem 6, Strategy 3 ############################################
+
