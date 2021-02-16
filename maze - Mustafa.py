@@ -451,7 +451,7 @@ for q in np.linspace(0,1,100):
     success = 0
     kept_runs = 0
     for run in range(runs):
-        print(run)
+        # print(run)
         maze = make_maze(dim, p)
         fire_x = rand.randrange(1,dim-1)
         fire_y = rand.randrange(1,dim-1)
@@ -466,8 +466,6 @@ for q in np.linspace(0,1,100):
                         maze = advance_fire_one_step(maze, q)
                         if path[step] == goal:
                             success += 1
-                            break
-                        else:
                             break
     print("At q:",q,"runs kept",kept_runs)
     dataX.append(q)
