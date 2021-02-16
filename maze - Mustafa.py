@@ -373,6 +373,7 @@ def take_nth_step_with_fire(maze, path, step=0):
 # maze = make_maze(dim, 0.3)
 # start = (0,0)
 # fire = (0, dim-1)
+# maze[fire[0]][fire[1]] = ' '
 
 # if dfs(maze, start, fire) != None:
 #     maze[fire[0]][fire[1]] = 'F'
@@ -384,7 +385,7 @@ def take_nth_step_with_fire(maze, path, step=0):
 #             if take_nth_step_with_fire(maze, path, step):
 #                 print("\n\n")
 #                 print_maze(maze)
-#                 maze = advance_fire_one_step(maze, 1.0)
+#                 maze = advance_fire_one_step(maze, 0.3)
 
                 
 #                 if path[step] == (dim-1,dim-1):
@@ -438,7 +439,7 @@ def take_nth_step_with_fire(maze, path, step=0):
 
 ################################## Problem 6, Strategy 1 ############################################
 
-dim = 20
+dim = 10
 runs = 25
 p = 0.3
 start = (0,0)
