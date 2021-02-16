@@ -369,37 +369,36 @@ def take_nth_step_with_fire(maze, path, step=0):
 ################################## Strategy 1 ############################################
 
 
-dim = 10
-maze = make_maze(dim, 0.3)
+# dim = 10
+# maze = make_maze(dim, 0.3)
+# start = (0,0)
+# fire = (0, dim-1)
 
-start = (0,0)
-fire = (0, dim-1)
+# if dfs(maze, start, fire) != None:
+#     maze[fire[0]][fire[1]] = 'F'
+#     print_maze(maze)
+#     path = dfs(maze, (0,0), (dim-1, dim-1))
 
-if dfs(maze, start, fire) != None:
-    maze[fire[0]][fire[1]] = 'F'
-    print_maze(maze)
-    path = dfs(maze, (0,0), (dim-1, dim-1))
-
-    if (path != None):
-        for step in range(len(path)):
-            if take_nth_step_with_fire(maze, path, step):
-                print("\n\n")
-                print_maze(maze)
-                maze = advance_fire_one_step(maze, 1.0)
+#     if (path != None):
+#         for step in range(len(path)):
+#             if take_nth_step_with_fire(maze, path, step):
+#                 print("\n\n")
+#                 print_maze(maze)
+#                 maze = advance_fire_one_step(maze, 1.0)
 
                 
-                if path[step] == (dim-1,dim-1):
-                    print("path found.")
-            else:
-                print("stepped into fire!")
-                break    
-    else:
-        print("No path found.")
-else:
+#                 if path[step] == (dim-1,dim-1):
+#                     print("path found.")
+#             else:
+#                 print("stepped into fire!")
+#                 break    
+#     else:
+#         print("No path found.")
+# else:
 
-    maze[fire[0]][fire[1]] = 'F'
-    print_maze(maze)
-    print("Cant reach fire.")
+#     maze[fire[0]][fire[1]] = 'F'
+#     print_maze(maze)
+#     print("Cant reach fire.")
 
 
 ################################## Strategy 2 ############################################
@@ -410,42 +409,36 @@ else:
 # start = (0,0)
 # goal = (dim-1, dim-1)
 # fire = (0, dim-1)
-
+# maze[fire[0]][fire[1]] = ' '
 
 # if dfs(maze, start, fire) != None:
 #     maze[fire[0]][fire[1]] = 'F'
-
+#     print_maze(maze)
 #     while(True):           
 #         path = dfs(maze, start, goal)        
 #         if path != None:                  
-#             take_n_steps(maze, path, 1)                   
-#             print("\n\nAfter step advance")
+#             take_n_steps(maze, path, 1)       
 #             print_maze(maze)  
-                 
-#             start = path[1]  
-            
+#             maze = advance_fire_one_step(maze, 1.0)                 
+#             start = path[1]              
 #             if start == goal:
 #                 print("Path found")
 #                 break
 #         else:
-#             print(start)
-#             print("\n\nNo path found in following maze:")
+#             print("\n\nNo path found.")
 #             print_maze(maze)
 #             break
-
-#         maze = advance_fire_one_step(maze, 1.0)
-#         print("\n\nInitial//After fire advance")
-#         print_maze(maze)
-# else:
-#     print("\n\nCant reach fire.")
+# else:    
+#     maze[fire[0]][fire[1]] = 'F'
 #     print_maze(maze)
+#     print("\n\nCant reach fire.")
 
 ################################## Strategy 3 ############################################
 
 
 ################################## Problem 6, Strategy 1 ############################################
 
-# dim = 30
+# dim = 10
 # runs = 25
 # p = 0.3
 # start = (0,0)
@@ -461,16 +454,17 @@ else:
 #         maze = make_maze(dim, p)
 #         fire_x = rand.randrange(1,dim-1)
 #         fire_y = rand.randrange(1,dim-1)
-#         maze[fire_x][fire_y] = 'F'
-#         path = dfs(maze, start, goal)
-#         if path != None:
-#             if dfs(maze, start, (fire_x, fire_y)) != None:
+#         if dfs(maze, start, (fire_x, fire_y)) != None:
+#             maze[fire_x][fire_y] = 'F'
+#             path = dfs(maze, start, goal)
+#             if path != None:
 #                 kept_runs += 1
 #                 for step in range(len(path)):
 #                     if take_nth_step_with_fire(maze, path, step):
 #                         maze = advance_fire_one_step(maze, q)
 #                         if path[step] == goal:
 #                             success += 1
+#                             break
 #     print("At q:",q,"runs kept",kept_runs)
 #     dataX.append(q)
 #     dataY.append(success/kept_runs)
@@ -483,41 +477,47 @@ else:
 
 ################################## Problem 6, Strategy 2 ############################################
 
-# dim = 30
-# runs = 25
-# p = 0.3
-# start = (0,0)
-# goal = (dim-1, dim-1)
+dim = 10
+runs = 10
+p = 0.3
 
-# dataX = []
-# dataY = []
+goal = (dim-1, dim-1)
 
-# for q in np.linspace(0,1,100):
-#     success = 0
-#     kept_runs = 0
-#     for run in range(runs):
-#         maze = make_maze(dim, p)
-#         fire_x = rand.randrange(1,dim-1)
-#         fire_y = rand.randrange(1,dim-1)
-#         maze[fire_x][fire_y] = 'F'
-#         path = dfs(maze, start, goal)
-#         if path != None:
-#             if dfs(maze, start, (fire_x, fire_y)) != None:
-#                 kept_runs += 1
-#                 for step in range(len(path)):
-#                     if take_nth_step_with_fire(maze, path, step):
-#                         maze = advance_fire_one_step(maze, q)
-#                         if path[step] == goal:
-#                             success += 1
-#     print("At q:",q,"runs kept",kept_runs)
-#     dataX.append(q)
-#     dataY.append(success/kept_runs)
+dataX = []
+dataY = []
 
-# plt.plot(dataX, dataY)
-# plt.title("Strategy 1 (`average strategy success rate' vs `flammability q')")
-# plt.ylabel("average strategy success rate")
-# plt.xlabel("flammability q")
-# plt.show()
+for q in np.linspace(0,1,100):
+    success = 0
+    kept_runs = 0
+    for run in range(runs):
+        maze = make_maze(dim, p)
+        fire_x = rand.randrange(1,dim-1)
+        fire_y = rand.randrange(1,dim-1)
+        start = (0,0)
+        if dfs(maze, start, (fire_x, fire_y)) != None:            
+            maze[fire_x][fire_y] = 'F'
+            path = dfs(maze, start, goal)
+            if path != None:
+                kept_runs += 1
+                while (True):
+                    if path != None:
+                        take_n_steps(maze, path, 1)
+                        maze = advance_fire_one_step(maze, q)
+                        start = path[1]
+                        if start == goal:
+                            success += 1
+                            break
+                    path = dfs(maze, start, goal)
+
+    print("At q:",q,"runs kept",kept_runs)
+    dataX.append(q)
+    dataY.append(success/kept_runs)
+
+plt.plot(dataX, dataY)
+plt.title("Strategy 2 (`average strategy success rate' vs `flammability q')")
+plt.ylabel("average strategy success rate")
+plt.xlabel("flammability q")
+plt.show()
 
 ################################## Problem 6, Strategy 3 ############################################
 
