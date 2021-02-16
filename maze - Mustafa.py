@@ -369,72 +369,76 @@ def take_nth_step_with_fire(maze, path, step=0):
 ################################## Strategy 1 ############################################
 
 
-# dim = 10
-# maze = make_maze(dim, 0.3)
-# print_maze(maze)
-# start = (0,0)
-# fire = (0, dim-1)
+dim = 10
+maze = make_maze(dim, 0.3)
 
+start = (0,0)
+fire = (0, dim-1)
 
+if dfs(maze, start, fire) != None:
+    maze[fire[0]][fire[1]] = 'F'
+    print_maze(maze)
+    path = dfs(maze, (0,0), (dim-1, dim-1))
 
-# if dfs(maze, start, fire) != None:
-#     maze[0][dim-1] = 'F'
-#     path = dfs(maze, (0,0), (dim-1, dim-1))
-
-#     if (path != None):
-#         for step in range(len(path)):
-#             if take_nth_step_with_fire(maze, path, step):
-#                 print("\n\n")
-#                 print_maze(maze)
-#                 maze = advance_fire_one_step(maze, 1.0)
+    if (path != None):
+        for step in range(len(path)):
+            if take_nth_step_with_fire(maze, path, step):
+                print("\n\n")
+                print_maze(maze)
+                maze = advance_fire_one_step(maze, 1.0)
 
                 
-#                 if path[step] == (dim-1,dim-1):
-#                     print("path found.")
-#             else:
-#                 print("stepped into fire!")
-#                 break    
-# else:
-#     print("No path found or cant reach fire.")
+                if path[step] == (dim-1,dim-1):
+                    print("path found.")
+            else:
+                print("stepped into fire!")
+                break    
+    else:
+        print("No path found.")
+else:
+
+    maze[fire[0]][fire[1]] = 'F'
+    print_maze(maze)
+    print("Cant reach fire.")
 
 
 ################################## Strategy 2 ############################################
 
 
-dim = 10
-maze = make_maze(dim, 0.3)
-start = (0,0)
-goal = (dim-1, dim-1)
-fire = (0, dim-1)
+# dim = 10
+# maze = make_maze(dim, 0.3)
+# start = (0,0)
+# goal = (dim-1, dim-1)
+# fire = (0, dim-1)
 
 
-if dfs(maze, start, fire) != None:
-    maze[fire[0]][fire[1]] = 'F'
+# if dfs(maze, start, fire) != None:
+#     maze[fire[0]][fire[1]] = 'F'
 
-    while(True):           
-        path = dfs(maze, start, goal)        
-        if path != None:                  
-            take_n_steps(maze, path, 1)                   
-            print("\n\nAfter step advance")
-            print_maze(maze)  
+#     while(True):           
+#         path = dfs(maze, start, goal)        
+#         if path != None:                  
+#             take_n_steps(maze, path, 1)                   
+#             print("\n\nAfter step advance")
+#             print_maze(maze)  
                  
-            start = path[1]  
+#             start = path[1]  
             
-            if start == goal:
-                print("Path found")
-                break
-        else:
-            print(start)
-            print("\n\nNo path found in following maze:")
-            print_maze(maze)
-            break
+#             if start == goal:
+#                 print("Path found")
+#                 break
+#         else:
+#             print(start)
+#             print("\n\nNo path found in following maze:")
+#             print_maze(maze)
+#             break
 
-        maze = advance_fire_one_step(maze, 1.0)
-        print("\n\nInitial//After fire advance")
-        print_maze(maze)
-else:
-    print("\n\nCant reach fire.")
-    print_maze(maze)
+#         maze = advance_fire_one_step(maze, 1.0)
+#         print("\n\nInitial//After fire advance")
+#         print_maze(maze)
+# else:
+#     print("\n\nCant reach fire.")
+#     print_maze(maze)
 
 ################################## Strategy 3 ############################################
 
