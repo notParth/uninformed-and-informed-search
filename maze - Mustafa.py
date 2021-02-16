@@ -438,7 +438,7 @@ def take_nth_step_with_fire(maze, path, step=0):
 
 ################################## Problem 6, Strategy 1 ############################################
 
-# dim = 10
+# dim = 20
 # runs = 25
 # p = 0.3
 # start = (0,0)
@@ -454,6 +454,7 @@ def take_nth_step_with_fire(maze, path, step=0):
 #         maze = make_maze(dim, p)
 #         fire_x = rand.randrange(1,dim-1)
 #         fire_y = rand.randrange(1,dim-1)
+#         maze[fire_x][fire_y] = ' '
 #         if dfs(maze, start, (fire_x, fire_y)) != None:
 #             maze[fire_x][fire_y] = 'F'
 #             path = dfs(maze, start, goal)
@@ -478,7 +479,7 @@ def take_nth_step_with_fire(maze, path, step=0):
 ################################## Problem 6, Strategy 2 ############################################
 
 dim = 10
-runs = 10
+runs = 20
 p = 0.3
 
 goal = (dim-1, dim-1)
@@ -493,6 +494,7 @@ for q in np.linspace(0,1,100):
         maze = make_maze(dim, p)
         fire_x = rand.randrange(1,dim-1)
         fire_y = rand.randrange(1,dim-1)
+        maze[fire_x][fire_y] = ' '
         start = (0,0)
         if dfs(maze, start, (fire_x, fire_y)) != None:            
             maze[fire_x][fire_y] = 'F'
@@ -507,7 +509,7 @@ for q in np.linspace(0,1,100):
                         if start == goal:
                             success += 1
                             break
-                    path = dfs(maze, start, goal)
+                    path = astar(maze, start, goal)
 
     print("At q:",q,"runs kept",kept_runs)
     dataX.append(q)
