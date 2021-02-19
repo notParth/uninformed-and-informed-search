@@ -376,26 +376,26 @@ def distance_from_fire(maze, neighbour):
     y = neighbour[1]
     min = 9999
     for i in range(x, len(maze)):
-        if maze[i][y] == 'F' and (x-i) < min:
-            min = (x-i)
-            break
-    for i in range(x, 0, -1):
-        if maze[i][y] == 'F' and (i-x) < min:
+        if maze[i][y] == 'F' and (i - x) < min:
             min = (i-x)
             break
+    for i in range(x, 0, -1):
+        if maze[i][y] == 'F' and (x - i) < min:
+            min = (x - i)
+            break
     for i in range(y, len(maze)):
-        if maze[x][i] == 'F' and (y-i) < min:
-            min = (y-i)
+        if maze[x][i] == 'F' and (i - y) < min:
+            min = (i - y)
             break
     for i in range(y, 0, -1):
-        if maze[x][i] == 'F' and (i-y) < min:
-            min = (i-y)
+        if maze[x][i] == 'F' and (y - i) < min:
+            min = (y - i)
             break
     if min == 9999:
         min = 0
     return min
 
-def astar_v2(maze, start, goal, q):
+def astar_v2(maze, temp_maze, start, goal, q):
     fringe = [] 
     heapq.heappush(fringe, (0,start))
     tree = dict()
@@ -413,17 +413,16 @@ def astar_v2(maze, start, goal, q):
                 current = tree[current]
             path.append(start)
             path.reverse()
-            return path
+            return path       
         for neighbour in get_nonfire_neighbours(maze, current):
             new_cost = cost_tree[current] + 1
             if neighbour not in cost_tree or new_cost < cost_tree[neighbour]:
                 cost_tree[neighbour] = new_cost
-                priority = new_cost + distance(goal, neighbour) - int(distance_from_fire(maze, neighbour) * q)
+                priority = new_cost + distance(goal, neighbour) - int(distance_from_fire(maze, neighbour)) + int(distance_from_fire(temp_maze, neighbour)*(0.6*q))
                 heapq.heappush(fringe, (priority, neighbour))
                 tree[neighbour] = current
 
     return None
-
 
 #################################################################################
 
@@ -471,7 +470,7 @@ def astar_v2(maze, start, goal, q):
 #plt.show()
 
 #s2
-dim = 20
+dim = 10
 runs = 40
 p = 0.3
 start = (0,0)
@@ -526,7 +525,7 @@ plt.plot(dataX1, dataY1)
 #plt.show()
 
 #s3
-dim = 20
+dim = 10
 runs = 40
 p = 0.3
 start = (0,0)
@@ -553,7 +552,10 @@ for q in np.linspace(0, 1, 100):
         maze[fire[0]][fire[1]] = 'F'
         flag = True
         while flag:
-            path = astar_v2(maze, start, goal, q)
+            temp_maze = np.copy(maze)
+            for i in range(2):
+                advance_fire_one_step(temp_maze, q)
+            path = astar_v2(maze, temp_maze, start, goal, q)
             steps = int(dim/4) 
             if path == None:
                 break
