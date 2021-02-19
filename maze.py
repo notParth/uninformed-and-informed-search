@@ -300,26 +300,26 @@ def astar(maze, start, goal):
 # What's the largest dimension you can solve using A at p = 0:3 in less than a minute?
 
 
-# dim = 10500
-# runs = 5
-# difference = 0
+#dim = 5000
+#runs = 5
+#difference = 0
 
-# for run in range(runs):
-#     while True:
-#         maze = make_maze(dim, 0.3)
-#         starting_time = time.time()
-#         # change search type here
-#         path = dfs(maze, (0,0), (dim-1, dim-1))
-#         difference = time.time()-starting_time
-#         if path != None:
-#             print("Path found in",difference,"seconds with",dim,"dim")
-#             if difference > 60:
-#                 break
-#             dim += 100
-#         else:
-#             print("Path not found in",difference,"seconds with",dim,"dim")
+#for run in range(runs):
+#    while True:
+#        maze = make_maze(dim, 0.3)
+#        starting_time = time.time()
+        # change search type here
+#        path = dfs(maze, (0,0), (dim-1, dim-1))
+#        difference = time.time()-starting_time
+#        if path != None:
+#            print("Path found in",difference,"seconds with",dim,"dim")
+#            if difference > 60:
+#                break
+#            dim += 100
+#        else:
+#            print("Path not found in",difference,"seconds with",dim,"dim")
 
-# print("Largest dimension found:", dim)   
+#print("Largest dimension found:", dim)   
 
 
 ###########################################################################
@@ -327,13 +327,14 @@ def astar(maze, start, goal):
 ###########################################################################
 
 def advance_fire_one_step(maze, q=0.3):
+    temp = np.copy(maze)
     dim = len(maze)
     for x in range(dim):
         for y in range(dim):
             if maze[x][y] != 'F' and maze[x][y] != 'X':
                 k = 0
-                for neighbour in get_neighbours(maze, (x, y)):
-                    if maze[neighbour[0]][neighbour[1]] == 'F':
+                for neighbour in get_neighbours(temp, (x, y)):
+                    if temp[neighbour[0]][neighbour[1]] == 'F':
                         k += 1
                     prob = 1 - (1-q)**k
                     if rand.random() <= prob:
@@ -390,6 +391,8 @@ def distance_from_fire(maze, neighbour):
         if maze[x][i] == 'F' and (i-y) < min:
             min = (i-y)
             break
+    if min == 9999:
+        min = 0
     return min
 
 def astar_v2(maze, start, goal, q):
@@ -415,7 +418,7 @@ def astar_v2(maze, start, goal, q):
             new_cost = cost_tree[current] + 1
             if neighbour not in cost_tree or new_cost < cost_tree[neighbour]:
                 cost_tree[neighbour] = new_cost
-                priority = new_cost + distance(goal, neighbour) + distance_from_fire(maze, neighbour)
+                priority = new_cost + distance(goal, neighbour) - int(distance_from_fire(maze, neighbour) * q)
                 heapq.heappush(fringe, (priority, neighbour))
                 tree[neighbour] = current
 
@@ -423,44 +426,45 @@ def astar_v2(maze, start, goal, q):
 
 
 #################################################################################
+
 #s1
-dim = 20
-runs = 40
-p = 0.3
-start = (0,0)
-goal = (dim-1, dim-1)
+#dim = 20
+#runs = 40
+#p = 0.3
+#start = (0,0)
+#goal = (dim-1, dim-1)
 
-dataX = []
-dataY = []
+#dataX = []
+#dataY = []
 
-for q in np.linspace(0, 1, 100):
-    print(q)
-    success = 0
-    for run in range(runs):
-        print(run)
-        maze = make_maze(dim, p)
-        fire = fire_coordinates(maze, start, goal)
-        path = bfs(maze, start, goal)
-        fire_path = bfs(maze, start, (fire[0], fire[1]))
-        while path == None or fire_path == None:
-            maze = make_maze(dim ,p)
-            fire = fire_coordinates(maze, start, goal)
-            path = bfs(maze, start, goal)
-            fire_path = bfs(maze, start, fire)
-        maze[fire[0]][fire[1]] = 'F'
-        for step in path:
-            if maze[step[0]][step[1]] == 'F':
-                break
-            maze[step[0]][step[1]] = '*'
-            if (step[0],step[1]) == goal:
-                success += 1
-                break
-            advance_fire_one_step(maze, q)
-            if maze[step[0]][step[1]] == 'F':
-                break
-    dataX.append(q)
-    dataY.append(success/runs)
-plt.plot(dataX, dataY)
+#for q in np.linspace(0, 1, 100):
+#    print(q)
+#    success = 0
+#    for run in range(runs):
+#        print(run)
+#        maze = make_maze(dim, p)
+#        fire = fire_coordinates(maze, start, goal)
+#        path = bfs(maze, start, goal)
+#        fire_path = bfs(maze, start, (fire[0], fire[1]))
+#        while path == None or fire_path == None:
+#            maze = make_maze(dim ,p)
+#            fire = fire_coordinates(maze, start, goal)
+#            path = bfs(maze, start, goal)
+#            fire_path = bfs(maze, start, fire)
+#        maze[fire[0]][fire[1]] = 'F'
+#        for step in path:
+#            if maze[step[0]][step[1]] == 'F':
+#                break
+#            maze[step[0]][step[1]] = '*'
+#            if (step[0],step[1]) == goal:
+#                success += 1
+#                break
+#            advance_fire_one_step(maze, q)
+#            if maze[step[0]][step[1]] == 'F':
+#                break
+#    dataX.append(q)
+#    dataY.append(success/runs)
+#plt.plot(dataX, dataY)
 #plt.title("Strategy 1 (`average strategy success rate' vs `flammability q')")
 #plt.ylabel("average strategy success rate")
 #plt.xlabel("flammability q")
@@ -550,7 +554,7 @@ for q in np.linspace(0, 1, 100):
         flag = True
         while flag:
             path = astar_v2(maze, start, goal, q)
-            steps = int(dim/6)
+            steps = int(dim/4) 
             if path == None:
                 break
             for step in path[1:steps+1]:
@@ -573,5 +577,5 @@ plt.plot(dataX2, dataY2)
 #plt.title("Strategy 3 (`average strategy success rate' vs `flammability q')")
 plt.ylabel("average strategy success rate")
 plt.xlabel("flammability q")
-plt.legend(["Strategy 1", "Strategy 2", "Strategy 3"])
+plt.legend(["Strategy 2", "Strategy 3"])
 plt.show()
